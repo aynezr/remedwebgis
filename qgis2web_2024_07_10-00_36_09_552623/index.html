@@ -1,0 +1,1556 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/KotaBogor_1.js"></script>
+        <script src="data/Jaringanjalan_2.js"></script>
+        <script src="data/ServiceArea400meter_3.js"></script>
+        <script src="data/FasilitasKesehatan_4.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_Positron_0');
+        map.getPane('pane_Positron_0').style.zIndex = 400;
+        var layer_Positron_0 = L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            pane: 'pane_Positron_0',
+            opacity: 1.0,
+            attribution: '<a href="https://cartodb.com/basemaps/">Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_Positron_0;
+        map.addLayer(layer_Positron_0);
+        function pop_KotaBogor_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">NAMOBJ</th>\
+                        <td>' + (feature.properties['NAMOBJ'] !== null ? autolinker.link(feature.properties['NAMOBJ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">WADMKC</th>\
+                        <td class="visible-with-data" id="WADMKC">' + (feature.properties['WADMKC'] !== null ? autolinker.link(feature.properties['WADMKC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">WADMPR</th>\
+                        <td>' + (feature.properties['WADMPR'] !== null ? autolinker.link(feature.properties['WADMPR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_KotaBogor_1_0(feature) {
+            switch(String(feature.properties['NAMOBJ'])) {
+                case 'Atangsenjaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,251,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Babakan':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(245,250,254,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Babakanpasar':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(243,249,254,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Balumbangjaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(241,247,253,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bantarjati':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(239,246,253,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Baranagsiang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(237,245,252,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Batutulis':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(236,244,251,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bitungsari':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,242,251,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bojongkerta':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(232,241,250,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bondongan':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(230,240,250,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bubulak':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(228,239,249,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cadasngampar':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(226,238,248,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciawi':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(224,236,248,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cibadak':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,235,247,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cibalung':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(220,234,246,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cibanon':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,233,246,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cibogor':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(217,232,245,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cibuluh':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,230,245,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciherang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(213,229,244,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciherangpondok':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(211,228,243,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cikarawang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(209,227,243,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cikaret':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,225,242,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cilebut Barat':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(206,224,242,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cilebut Timur':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(204,223,241,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cilendek Barat':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(202,222,240,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cilendek Timur':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,221,240,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciluar':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(198,219,239,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cimahpar':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(196,218,238,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cimandala':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(193,217,237,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cimangis':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,215,236,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciomas':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(187,214,235,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciomasrahayu':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(184,213,234,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cipaku':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(181,212,233,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciparigi':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(177,210,232,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cipicung':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(174,209,231,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ciwaringin':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(171,208,230,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Cujujung':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(168,206,229,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Curug':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(165,205,228,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Curugmekar':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(162,204,226,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Dramaga':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(159,203,225,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Empang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(156,201,224,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Genteng':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(152,199,224,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Gudang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(148,196,223,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Gunungbatu':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(144,194,222,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Harjasari':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(140,192,221,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Katulampa':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(136,190,220,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kayumanis':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(132,188,219,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kebonkalapa':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(128,186,219,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kebonpedes':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,184,218,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kedungbadak':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(121,182,217,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kedunghalang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(117,179,216,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kedungjaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(113,177,215,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kedungwaringin':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(109,175,214,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kencana':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(106,173,213,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kertamaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(102,171,212,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kotabatu':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(99,169,211,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Laladon':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(96,167,210,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Lawanggintung':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(93,164,209,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Loji':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(90,162,207,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Margajaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(87,160,206,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Mekarjaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,158,205,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Mekarwangi':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(81,156,204,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Menteng':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(77,154,202,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Muarasari':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(74,152,201,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Mulyaharja':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(71,150,200,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pabaton':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(68,147,199,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pakuan':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(65,145,198,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Palasari':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(63,143,196,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Paledang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(60,140,195,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pamoyanan':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(58,138,194,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Panaragan':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(55,135,192,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pandansari':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(53,133,191,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Parakan':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(50,130,190,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Parakanjaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(48,128,188,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pasiraja':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(45,125,187,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pasirjambu':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,123,186,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pasirjaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(40,120,185,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pasirkuda':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(37,117,183,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pasirlaja':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(35,115,182,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pasirmulya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(33,112,181,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Rancamaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(30,110,178,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ranggamekar':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(28,107,176,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Semplak':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(26,104,174,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Semplak Barat':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(24,102,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sempur':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(22,99,170,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sindangbarang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(20,97,168,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sindangrasa':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(18,94,166,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sindangsari':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(16,91,164,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Situgede':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(14,89,162,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sukadamai':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(12,86,160,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sukaharja':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(10,83,158,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sukamantri':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,81,156,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sukaresmi':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,77,151,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sukasari':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,74,146,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tajur':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,71,141,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tanah Baru':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,68,136,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tanahsareal':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,64,131,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tegalega':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,61,126,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tegalgundil':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,58,122,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Telukpinang':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,55,117,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Waringinjaya':
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,51,112,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_KotaBogor_1',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,48,107,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_KotaBogor_1');
+        map.getPane('pane_KotaBogor_1').style.zIndex = 401;
+        map.getPane('pane_KotaBogor_1').style['mix-blend-mode'] = 'normal';
+        var layer_KotaBogor_1 = new L.geoJson(json_KotaBogor_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KotaBogor_1',
+            layerName: 'layer_KotaBogor_1',
+            pane: 'pane_KotaBogor_1',
+            onEachFeature: pop_KotaBogor_1,
+            style: style_KotaBogor_1_0,
+        });
+        bounds_group.addLayer(layer_KotaBogor_1);
+        map.addLayer(layer_KotaBogor_1);
+        function pop_Jaringanjalan_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">REMARK</th>\
+                        <td>' + (feature.properties['REMARK'] !== null ? autolinker.link(feature.properties['REMARK'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Jaringanjalan_2_0() {
+            return {
+                pane: 'pane_Jaringanjalan_2',
+                opacity: 1,
+                color: 'rgba(152,125,183,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Jaringanjalan_2');
+        map.getPane('pane_Jaringanjalan_2').style.zIndex = 402;
+        map.getPane('pane_Jaringanjalan_2').style['mix-blend-mode'] = 'normal';
+        var layer_Jaringanjalan_2 = new L.geoJson(json_Jaringanjalan_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Jaringanjalan_2',
+            layerName: 'layer_Jaringanjalan_2',
+            pane: 'pane_Jaringanjalan_2',
+            onEachFeature: pop_Jaringanjalan_2,
+            style: style_Jaringanjalan_2_0,
+        });
+        bounds_group.addLayer(layer_Jaringanjalan_2);
+        map.addLayer(layer_Jaringanjalan_2);
+        function pop_ServiceArea400meter_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">REMARK</th>\
+                        <td>' + (feature.properties['REMARK'] !== null ? autolinker.link(feature.properties['REMARK'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_ServiceArea400meter_3_0() {
+            return {
+                pane: 'pane_ServiceArea400meter_3',
+                opacity: 1,
+                color: 'rgba(0,208,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 4.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_ServiceArea400meter_3');
+        map.getPane('pane_ServiceArea400meter_3').style.zIndex = 403;
+        map.getPane('pane_ServiceArea400meter_3').style['mix-blend-mode'] = 'normal';
+        var layer_ServiceArea400meter_3 = new L.geoJson(json_ServiceArea400meter_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ServiceArea400meter_3',
+            layerName: 'layer_ServiceArea400meter_3',
+            pane: 'pane_ServiceArea400meter_3',
+            onEachFeature: pop_ServiceArea400meter_3,
+            style: style_ServiceArea400meter_3_0,
+        });
+        bounds_group.addLayer(layer_ServiceArea400meter_3);
+        map.addLayer(layer_ServiceArea400meter_3);
+        function pop_FasilitasKesehatan_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">REMARK</th>\
+                        <td>' + (feature.properties['REMARK'] !== null ? autolinker.link(feature.properties['REMARK'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NAMA</th>\
+                        <td>' + (feature.properties['NAMA'] !== null ? autolinker.link(feature.properties['NAMA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Foto</th>\
+                        <td>' + (feature.properties['Foto'] !== null ? '<img src="images/' + String(feature.properties['Foto']).replace(/[\\\/:]/g, '_').trim() + '">' : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Rating</th>\
+                        <td>' + (feature.properties['Rating'] !== null ? autolinker.link(feature.properties['Rating'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_FasilitasKesehatan_4_0(feature) {
+            switch(String(feature.properties['NAMA'])) {
+                case 'Poliklinik Pusat Kes. Jiwa':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(150,65,235,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Batutulis':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(45,217,79,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Bodongan':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(224,97,111,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Bogor Timur':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(87,200,162,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Gang Kelor':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(237,115,49,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Pembantu Panaragan':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,20,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Pondok Rumput':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(86,233,33,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Sempur':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(90,82,239,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Sindangsari':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(66,132,223,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Tegalega':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,193,74,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RS Melania':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(114,200,211,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RS Ummi':
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(231,100,235,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_FasilitasKesehatan_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(170,218,37,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_FasilitasKesehatan_4');
+        map.getPane('pane_FasilitasKesehatan_4').style.zIndex = 404;
+        map.getPane('pane_FasilitasKesehatan_4').style['mix-blend-mode'] = 'normal';
+        var layer_FasilitasKesehatan_4 = new L.geoJson(json_FasilitasKesehatan_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_FasilitasKesehatan_4',
+            layerName: 'layer_FasilitasKesehatan_4',
+            pane: 'pane_FasilitasKesehatan_4',
+            onEachFeature: pop_FasilitasKesehatan_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_FasilitasKesehatan_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_FasilitasKesehatan_4);
+        map.addLayer(layer_FasilitasKesehatan_4);
+        var baseMaps = {};
+        var overlaysTree = [
+            {label: 'Fasilitas Kesehatan<br /><table><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PoliklinikPusatKesJiwa0.png" /></td><td>Poliklinik Pusat Kes. Jiwa</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasBatutulis1.png" /></td><td>Puskesmas Batutulis</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasBodongan2.png" /></td><td>Puskesmas Bodongan</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasBogorTimur3.png" /></td><td>Puskesmas Bogor Timur</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasGangKelor4.png" /></td><td>Puskesmas Gang Kelor</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasPembantuPanaragan5.png" /></td><td>Puskesmas Pembantu Panaragan</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasPondokRumput6.png" /></td><td>Puskesmas Pondok Rumput</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasSempur7.png" /></td><td>Puskesmas Sempur</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasSindangsari8.png" /></td><td>Puskesmas Sindangsari</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_PuskesmasTegalega9.png" /></td><td>Puskesmas Tegalega</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_RSMelania10.png" /></td><td>RS Melania</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_RSUmmi11.png" /></td><td>RS Ummi</td></tr><tr><td style="text-align: center;"><img src="legend/FasilitasKesehatan_4_12.png" /></td><td></td></tr></table>', layer: layer_FasilitasKesehatan_4},
+            {label: '<img src="legend/ServiceArea400meter_3.png" /> Service Area 400 meter', layer: layer_ServiceArea400meter_3},
+            {label: '<img src="legend/Jaringanjalan_2.png" /> Jaringan jalan', layer: layer_Jaringanjalan_2},
+            {label: 'Kota Bogor<br /><table><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Atangsenjaya0.png" /></td><td>Atangsenjaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Babakan1.png" /></td><td>Babakan</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Babakanpasar2.png" /></td><td>Babakanpasar</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Balumbangjaya3.png" /></td><td>Balumbangjaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Bantarjati4.png" /></td><td>Bantarjati</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Baranagsiang5.png" /></td><td>Baranagsiang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Batutulis6.png" /></td><td>Batutulis</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Bitungsari7.png" /></td><td>Bitungsari</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Bojongkerta8.png" /></td><td>Bojongkerta</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Bondongan9.png" /></td><td>Bondongan</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Bubulak10.png" /></td><td>Bubulak</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cadasngampar11.png" /></td><td>Cadasngampar</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ciawi12.png" /></td><td>Ciawi</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cibadak13.png" /></td><td>Cibadak</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cibalung14.png" /></td><td>Cibalung</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cibanon15.png" /></td><td>Cibanon</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cibogor16.png" /></td><td>Cibogor</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cibuluh17.png" /></td><td>Cibuluh</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ciherang18.png" /></td><td>Ciherang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ciherangpondok19.png" /></td><td>Ciherangpondok</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cikarawang20.png" /></td><td>Cikarawang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cikaret21.png" /></td><td>Cikaret</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_CilebutBarat22.png" /></td><td>Cilebut Barat</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_CilebutTimur23.png" /></td><td>Cilebut Timur</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_CilendekBarat24.png" /></td><td>Cilendek Barat</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_CilendekTimur25.png" /></td><td>Cilendek Timur</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ciluar26.png" /></td><td>Ciluar</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cimahpar27.png" /></td><td>Cimahpar</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cimandala28.png" /></td><td>Cimandala</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cimangis29.png" /></td><td>Cimangis</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ciomas30.png" /></td><td>Ciomas</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ciomasrahayu31.png" /></td><td>Ciomasrahayu</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cipaku32.png" /></td><td>Cipaku</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ciparigi33.png" /></td><td>Ciparigi</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cipicung34.png" /></td><td>Cipicung</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ciwaringin35.png" /></td><td>Ciwaringin</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Cujujung36.png" /></td><td>Cujujung</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Curug37.png" /></td><td>Curug</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Curugmekar38.png" /></td><td>Curugmekar</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Dramaga39.png" /></td><td>Dramaga</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Empang40.png" /></td><td>Empang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Genteng41.png" /></td><td>Genteng</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Gudang42.png" /></td><td>Gudang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Gunungbatu43.png" /></td><td>Gunungbatu</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Harjasari44.png" /></td><td>Harjasari</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Katulampa45.png" /></td><td>Katulampa</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kayumanis46.png" /></td><td>Kayumanis</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kebonkalapa47.png" /></td><td>Kebonkalapa</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kebonpedes48.png" /></td><td>Kebonpedes</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kedungbadak49.png" /></td><td>Kedungbadak</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kedunghalang50.png" /></td><td>Kedunghalang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kedungjaya51.png" /></td><td>Kedungjaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kedungwaringin52.png" /></td><td>Kedungwaringin</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kencana53.png" /></td><td>Kencana</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kertamaya54.png" /></td><td>Kertamaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Kotabatu55.png" /></td><td>Kotabatu</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Laladon56.png" /></td><td>Laladon</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Lawanggintung57.png" /></td><td>Lawanggintung</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Loji58.png" /></td><td>Loji</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Margajaya59.png" /></td><td>Margajaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Mekarjaya60.png" /></td><td>Mekarjaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Mekarwangi61.png" /></td><td>Mekarwangi</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Menteng62.png" /></td><td>Menteng</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Muarasari63.png" /></td><td>Muarasari</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Mulyaharja64.png" /></td><td>Mulyaharja</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pabaton65.png" /></td><td>Pabaton</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pakuan66.png" /></td><td>Pakuan</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Palasari67.png" /></td><td>Palasari</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Paledang68.png" /></td><td>Paledang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pamoyanan69.png" /></td><td>Pamoyanan</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Panaragan70.png" /></td><td>Panaragan</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pandansari71.png" /></td><td>Pandansari</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Parakan72.png" /></td><td>Parakan</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Parakanjaya73.png" /></td><td>Parakanjaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pasiraja74.png" /></td><td>Pasiraja</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pasirjambu75.png" /></td><td>Pasirjambu</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pasirjaya76.png" /></td><td>Pasirjaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pasirkuda77.png" /></td><td>Pasirkuda</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pasirlaja78.png" /></td><td>Pasirlaja</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Pasirmulya79.png" /></td><td>Pasirmulya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Rancamaya80.png" /></td><td>Rancamaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Ranggamekar81.png" /></td><td>Ranggamekar</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Semplak82.png" /></td><td>Semplak</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_SemplakBarat83.png" /></td><td>Semplak Barat</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sempur84.png" /></td><td>Sempur</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sindangbarang85.png" /></td><td>Sindangbarang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sindangrasa86.png" /></td><td>Sindangrasa</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sindangsari87.png" /></td><td>Sindangsari</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Situgede88.png" /></td><td>Situgede</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sukadamai89.png" /></td><td>Sukadamai</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sukaharja90.png" /></td><td>Sukaharja</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sukamantri91.png" /></td><td>Sukamantri</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sukaresmi92.png" /></td><td>Sukaresmi</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Sukasari93.png" /></td><td>Sukasari</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Tajur94.png" /></td><td>Tajur</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_TanahBaru95.png" /></td><td>Tanah Baru</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Tanahsareal96.png" /></td><td>Tanahsareal</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Tegalega97.png" /></td><td>Tegalega</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Tegalgundil98.png" /></td><td>Tegalgundil</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Telukpinang99.png" /></td><td>Telukpinang</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_Waringinjaya100.png" /></td><td>Waringinjaya</td></tr><tr><td style="text-align: center;"><img src="legend/KotaBogor_1_101.png" /></td><td></td></tr></table>', layer: layer_KotaBogor_1},
+            {label: "Positron", layer: layer_Positron_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+        setBounds();
+        var i = 0;
+        layer_KotaBogor_1.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['NAMOBJ'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['NAMOBJ']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_KotaBogor_1'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_FasilitasKesehatan_4.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['kode'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['kode']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_FasilitasKesehatan_4'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_KotaBogor_1,layer_Jaringanjalan_2,layer_FasilitasKesehatan_4]);
+        map.on("zoomend", function(){
+            resetLabels([layer_KotaBogor_1,layer_Jaringanjalan_2,layer_FasilitasKesehatan_4]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_KotaBogor_1,layer_Jaringanjalan_2,layer_FasilitasKesehatan_4]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_KotaBogor_1,layer_Jaringanjalan_2,layer_FasilitasKesehatan_4]);
+        });
+        </script>
+    </body>
+</html>
